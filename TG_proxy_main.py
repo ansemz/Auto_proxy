@@ -32,7 +32,7 @@ new_list = []
 e_sub = ['https://sub.pmsub.me/base64','https://www.prop.cf/?name=paimon&client=base64','https://raw.githubusercontent.com/yaney01/Yaney01/main/temporary','https://sub.pmsub.me/base64','https://raw.githubusercontent.com/hkaa0/permalink/main/proxy/V2ray','https://sub.sharecentre.online/sub','https://raw.githubusercontent.com/freefq/free/master/v2','https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub','https://raw.githubusercontent.com/learnhard-cn/free_proxy_ss/main/free','https://raw.githubusercontent.com/ripaojiedian/freenode/main/sub']
 #e_sub = ['https://pastebin.com/raw/dmnL3uAR','https://openit.uitsrt.top/long','https://raw.githubusercontent.com/freefq/free/master/v2','https://raw.githubusercontent.com/ripaojiedian/freenode/main/sub','https://raw.githubusercontent.com/aiboboxx/v2rayfree/main/v2','https://raw.githubusercontent.com/kxswa/k/k/base64']
 #频道
-urls =["https://t.me/s/masco899","https://t.me/s/wxdy666","https://t.me/s/nice16688","https://t.me/s/airproxies","https://t.me/s/kxswa","https://t.me/s/helloworld_1024","https://t.me/s/dingyue_Center","https://t.me/s/xuanyizero"]
+urls =["https://t.me/s/freeVPNjd","https://t.me/s/wxdy666","https://t.me/s/nice16688","https://t.me/s/go4sharing","https://t.me/s/helloworld_1024","https://t.me/s/dingyue_Center","https://t.me/s/ZDYZ2"]
 #线程池
 threads = []
 #机场链接
@@ -335,7 +335,7 @@ def get_sub_url():
                         f'{current_url}/api/v1/user/order/checkout', data=fan_data_n, headers=fan_header)
                     subscription_url = f'{current_url}/api/v1/client/subscribe?token={fan_res.json()["data"]["token"]}'
                     try_sub.append(subscription_url)
-                    e_sub.append(subscription_url)
+                    #e_sub.append(subscription_url)
                     print("add:"+subscription_url)
                 except Exception as result:
                     print(result)
@@ -346,28 +346,33 @@ def get_sub_url():
                         current_url+V2B_REG_REL_URL, data=form_data, headers=header)
                     subscription_url = f'{current_url}/api/v1/client/subscribe?token={response.json()["data"]["token"]}'
                     try_sub.append(subscription_url)
-                    e_sub.append(subscription_url)
+                    #e_sub.append(subscription_url)
                     print("add:"+subscription_url)
                 except Exception as e:
                     print("获取订阅失败",e)
             i += 1
 
             
-  
+ # ========== 抓取 kkzui.com 的节点 ==========  
 def get_kkzui():
-    # ========== 抓取 kkzui.com 的节点 ==========
     try:
-        headers = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 Edg/105.0.1343.53"}
-        res = requests.get("https://kkzui.com/jd?orderby=modified",headers=headers)
-        article_url = re.search(r'<h2 class="item-heading"><a href="(https://kkzui.com/(.*?)\.html)"',res.text).groups()[0]
+        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 Edg/105.0.1343.53"}
+        res = requests.get("https://kkzui.com/jd?orderby=modified", headers=headers)
+        article_url = re.search(r'class="media-content" href="(.*?)"', res.text).groups()[0]
         #print(article_url)
-        res = requests.get(article_url,headers=headers)
-        sub_url = re.search(r'<p><strong>这是v2订阅地址</strong>：(.*?)</p>',res.text).groups()[0]
-        print(sub_url)
+        res = requests.get(article_url, headers=headers)
+        sub_url = re.search(
+            r'<strong>这是v2订阅地址：(.*?)</strong>', res.text).groups()[0]
+        #print(sub_url)
+        try_sub.append(sub_url)
         e_sub.append(sub_url)
         print("获取kkzui.com完成！")
-    except:
+    except Exception as e:
+        print(e)
         print("获取kkzui.com失败！")
+        
+# ========== 抓取 cfmem.com 的节点 ==========
+def get_cfmem():
     try:
         headers = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 Edg/105.0.1343.53"}
         res = requests.get("https://www.cfmem.com/search/label/free",headers=headers)
@@ -375,18 +380,67 @@ def get_kkzui():
         #print(article_url)
         res = requests.get(article_url,headers=headers)
         sub_url = re.search(r'>v2ray订阅链接&#65306;(.*?)</span>',res.text).groups()[0]
-        print(sub_url)
+        #print(sub_url)
         try_sub.append(sub_url)
         e_sub.append(sub_url)
+        print("获取cfmem.com完成！")
     except Exception as e:
         print(e)
+        print("获取cfmem.com失败！")
+
+# ========== 抓取 v2rayshare.com 的节点 ==========
+def get_v2rayshare():
+    try:
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 Edg/105.0.1343.53"}
+        res = requests.get(
+            "https://v2rayshare.com/", headers=headers)
+        #print(res.text)
+        article_url = re.search(
+            r'https://v2rayshare.com/p/\d+\.html', res.text).group()
+        #print(article_url)
+        res = requests.get(article_url, headers=headers)
+        sub_url = re.search(
+            r'<p>https://v2rayshare.com/wp-content/uploads/(.*?)</p>', res.text).groups()[0]
+        sub_url = 'https://v2rayshare.com/wp-content/uploads/'+sub_url
+        #print(sub_url)
+        try_sub.append(sub_url)
+        e_sub.append(sub_url)
+        print("获取v2rayshare.com完成！")
+    except Exception as e:
+        print("获取v2rayshare.com失败！",e)
+
+# ========== 抓取 nodefree.org 的节点 ==========
+def get_nodefree():
+    try:
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 Edg/105.0.1343.53"}
+        res = requests.get(
+            "https://nodefree.org/", headers=headers)
+        #print(res.text)
+        article_url = re.search(
+            r'https://nodefree.org/p/\d+\.html', res.text).group()
+        #print(article_url)
+        res = requests.get(article_url, headers=headers)
+        sub_url = re.search(
+            r'<p>https://nodefree.org/dy/(.*?)</p>', res.text).groups()[0]
+        sub_url = 'https://nodefree.org/dy/'+sub_url
+        #print(sub_url)
+        try_sub.append(sub_url)
+        e_sub.append(sub_url)
+        print("获取nodefree.org完成！")
+    except Exception as e:
+        print("获取nodefree.org失败！",e)
         
     
 if __name__ == '__main__':
     print("========== 开始获取机场订阅链接 ==========")
     get_sub_url()
-    print("========== 开始获取kkzui.com订阅链接 ==========")
+    print("========== 开始获取网站订阅链接 ==========")
     get_kkzui()
+    get_cfmem()
+    get_v2rayshare()
+    get_nodefree()
     print("========== 开始获取频道订阅链接 ==========")
     for url in urls:
         #print(url, "开始获取......")
